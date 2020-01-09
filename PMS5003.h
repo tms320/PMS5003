@@ -50,7 +50,7 @@ public:
 	uint16_t nc10um;	// number of particles with diameter beyond 10um in 0.1 litre of air
 
 private:
-	static const int64_t PREHEAT_TIME = 30000;	// ms
+	static const int64_t PREHEAT_TIME = 60000;	// ms
 
 	bool _isReady;
 	bool _isSleeping;
