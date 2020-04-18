@@ -14,22 +14,24 @@
 #include <PMS5003.h>
 
 
-PMS5003::PMS5003(HardwareSerial &hwSerial, int8_t sleepPin, bool sleep)
+PMS5003::PMS5003()
 {
-	_hwSerial = &hwSerial;
+	_isReady = false;
+	_hwSerial = NULL;
 	_swSerial = NULL;
-	_uart = (Stream*)_hwSerial;
-	init(sleepPin, sleep);
+	_uart = NULL;
 }
 
 
-PMS5003::PMS5003(uint8_t rxPin, bool invert, int8_t sleepPin, bool sleep)
+PMS5003::PMS5003(HardwareSerial &hwSerial, int8_t sleepPin, bool sleep) : PMS5003()
 {
-	_hwSerial = NULL;
-	_swSerial = new SoftwareSerial((int8_t)rxPin, -1, invert);
-	if (_swSerial != NULL) _swSerial->begin(9600, SWSERIAL_8N1);
-	_uart = (Stream*)_swSerial;
-	init(sleepPin, sleep);
+	init(hwSerial, sleepPin, sleep);
+}
+
+
+PMS5003::PMS5003(uint8_t rxPin, bool invert, int8_t sleepPin, bool sleep) : PMS5003()
+{
+	init(rxPin, invert, sleepPin, sleep);
 }
 
 
@@ -39,7 +41,27 @@ PMS5003::~PMS5003()
 }
 
 
-void PMS5003::init(int8_t sleepPin, bool sleep)
+bool PMS5003::init(HardwareSerial &hwSerial, int8_t sleepPin, bool sleep)
+{
+	_hwSerial = &hwSerial;
+	_swSerial = NULL;
+	_uart = (Stream*)_hwSerial;
+	initSleepPin(sleepPin, sleep);
+	return true;
+}
+
+bool PMS5003::init(uint8_t rxPin, bool invert, int8_t sleepPin, bool sleep)
+{
+	_hwSerial = NULL;
+	_swSerial = new SoftwareSerial((int8_t)rxPin, -1, invert);
+	if (_swSerial != NULL) _swSerial->begin(9600, SWSERIAL_8N1);
+	_uart = (Stream*)_swSerial;
+	initSleepPin(sleepPin, sleep);
+	return _uart != NULL;
+}
+
+
+void PMS5003::initSleepPin(int8_t sleepPin, bool sleep)
 {
 	_isReady = false;
 	_sleepPin = sleepPin;

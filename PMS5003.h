@@ -19,13 +19,13 @@
 class PMS5003
 {
 public:
-	// Constructor for hardware UART.
-	PMS5003(HardwareSerial &hwSerial, int8_t sleepPin = -1, bool sleep = false);
-
-	// Constructor for software UART.
-	PMS5003(uint8_t rxPin, bool invert = false, int8_t sleepPin = -1, bool sleep = false);
-
+	PMS5003();
+	PMS5003(HardwareSerial &hwSerial, int8_t sleepPin = -1, bool sleep = false);	// use for hardware UART
+	PMS5003(uint8_t rxPin, bool invert = false, int8_t sleepPin = -1, bool sleep = false);	// use for software UART
 	~PMS5003();
+
+	bool init(HardwareSerial &hwSerial, int8_t sleepPin = -1, bool sleep = false);	// use for hardware UART
+	bool init(uint8_t rxPin, bool invert = false, int8_t sleepPin = -1, bool sleep = false);	// use for software UART
 
 	bool isReady();		// returns 'true' when preheat timed out (after startup or wake up)
 	bool isSleeping();	// returns 'true' if sensor is in sleeping state
@@ -60,6 +60,6 @@ private:
 	int64_t _wakeUpTime;
 	int8_t _sleepPin, _resetPin;
 
-	void init(int8_t sleepPin, bool sleep);
+	void initSleepPin(int8_t sleepPin, bool sleep);
 	int getDataInternal(int64_t startTime);
 };
